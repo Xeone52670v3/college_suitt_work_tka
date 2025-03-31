@@ -1,27 +1,20 @@
 import java.util.Scanner;
 
 public class U {
-    static class NEEx extends Exception {
-        NEEx(String m) { super(m); }
+
+    private String name;
+    private String password;
+
+    U(String name, String password) {
+        this.name = name;
+        this.password = password;
     }
 
-    static class PEEx extends Exception {
-        PEEx(String m) { super(m); }
-    }
-
-    String n;
-    String p;
-
-    U(String u, String ps) {
-        this.n = u;
-        this.p = ps;
-    }
-
-    public static void main(String[] a) {
-        final int maxU = 15;
-        U[] usrs = new U[maxU];
-        int cnt = 0;
-        Scanner s = new Scanner(System.in);
+    public static void main(String[] args) {
+        final int MAX_USERS = 15;
+        U[] users = new U[MAX_USERS];
+        int userCount = 0;
+        Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("-----------------------------");
@@ -33,103 +26,117 @@ public class U {
             System.out.println("4 Вийти");
             System.out.print("Ваш вибiр: ");
 
-            int ch;
-            try {
-                ch = Integer.parseInt(s.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Неправильний ввiд!");
-                continue;
-            }
-
-            if (ch == 4) {
+            int choice = getUserChoice(scanner);
+            if (choice == 4) {
                 System.out.println("Вихiд...");
                 break;
-            } else if (ch == 1) {
-                if (cnt >= maxU) {
-                    System.out.println("Досягнуто максимум!");
-                } else try {
-                    System.out.print("Iм'я: ");
-                    String u = s.nextLine();
-                    valU(u);
+            }
 
-                    for (int i = 0; i < cnt; i++)
-                        if (usrs[i].n.equals(u))
-                            throw new NEEx("Iм'я вже є");
-
-                    System.out.print("Пароль: ");
-                    String ps = s.nextLine();
-                    valP(ps);
-
-                    usrs[cnt++] = new U(u, ps);
-                    System.out.println("Успiшно додано!");
-                } catch (NEEx | PEEx e) {
-                    System.out.println("Помилка: " + e.getMessage());
-                }
-            } else if (ch == 2) {
-                System.out.print("Введіть iм'я для видалення: ");
-                String u = s.nextLine();
-                boolean f = false;
-                for (int i = 0; i < cnt; i++) {
-                    if (usrs[i].n.equals(u)) {
-                        usrs[i] = usrs[cnt - 1];
-                        usrs[--cnt] = null;
-                        System.out.println("Видалено.");
-                        f = true;
-                        break;
+            switch (choice) {
+                case 1:
+                    if (userCount < MAX_USERS) {
+                        addUser(scanner, users, userCount++);
+                    } else {
+                        System.out.println("Досягнуто максимум користувачів!");
                     }
-                }
-                if (!f) System.out.println("Не знайдено!");
-            } else if (ch == 3) {
-                System.out.print("Iм'я: ");
-                String u = s.nextLine();
-                System.out.print("Пароль: ");
-                String ps = s.nextLine();
-                boolean auth = false;
-                for (int i = 0; i < cnt; i++) {
-                    if (usrs[i].n.equals(u) && usrs[i].p.equals(ps)) {
-                        System.out.println("Успiх!");
-                        auth = true;
-                        break;
-                    }
-                }
-                if (!auth) System.out.println("Невiрнi данi!");
-            } else {
-                System.out.println("Невiрний вибiр!");
+                    break;
+                case 2:
+                    deleteUser(scanner, users, userCount--);
+                    break;
+                case 3:
+                    authenticateUser(scanner, users, userCount);
+                    break;
+                default:
+                    System.out.println("Невiрний вибiр!");
             }
         }
-        s.close();
+        scanner.close();
     }
 
-    private static void valP(String ps) throws PEEx {
-        if (ps.length() < 10) throw new PEEx("Пароль <10");
-        if (ps.contains(" ")) throw new PEEx("Пробiл в паролi");
+    private static int getUserChoice(Scanner scanner) {
+        try {
+            return Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Неправильний ввiд!");
+            return -1;
+        }
+    }
 
-        int d = 0;
-        boolean sp = false;
-        String[] bad = {"admin", "pass", "password", "qwerty", "ytrewq", "123456", "111111", "222222",
-                "333333", "444444", "555555", "666666", "777777", "888888", "999999", "000000"};
-        String lc = ps.toLowerCase();
+    private static void addUser(Scanner scanner, U[] users, int userCount) {
+        try {
+            System.out.print("Iм'я: ");
+            String name = scanner.nextLine();
+            if (name.length() < 5 || name.contains(" ")) {
+                throw new IllegalArgumentException("<5 символiв або пробiл в iменi");
+            }
 
-        for (String w : bad)
-            if (lc.contains(w))
-                throw new PEEx("Заборонене слово: " + w);
+            for (int i = 0; i < userCount; i++) {
+                if (users[i].name.equals(name)) {
+                    throw new IllegalArgumentException("Iм'я вже є");
+                }
+            }
 
-        for (char c : ps.toCharArray()) {
-            if (!chkC(c)) throw new PEEx("Недопустимий символ");
-            if (Character.isDigit(c)) d++;
-            if (!Character.isLetterOrDigit(c)) sp = true;
+            System.out.print("Пароль: ");
+            String password = scanner.nextLine();
+            if (password.length() < 10 || password.contains(" ")) {
+                throw new IllegalArgumentException("Пароль повинен бути >= 10 символів без пробілів");
+            }
+
+            if (!password.matches(".*\\d.*") || !password.matches(".*[!@#$%^&*()].*")) {
+                throw new IllegalArgumentException("Пароль повинен містити хоча б 1 цифру та 1 спецсимвол");
+            }
+
+            String[] forbiddenWords = {"admin", "pass", "password", "qwerty", "123456"};
+            for (String word : forbiddenWords) {
+                if (password.toLowerCase().contains(word)) {
+                    throw new IllegalArgumentException("Заборонене слово в паролi");
+                }
+            }
+
+            users[userCount] = new U(name, password);
+            System.out.println("Успiшно додано!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Помилка: " + e.getMessage());
+        }
+    }
+
+    private static void deleteUser(Scanner scanner, U[] users, int userCount) {
+        System.out.print("Введіть iм'я для видалення: ");
+        String name = scanner.nextLine();
+        boolean userFound = false;
+
+        for (int i = 0; i < userCount; i++) {
+            if (users[i].name.equals(name)) {
+                users[i] = users[userCount - 1];
+                users[userCount - 1] = null;
+                userFound = true;
+                System.out.println("Видалено.");
+                break;
+            }
         }
 
-        if (d < 3) throw new PEEx("<3 цифр");
-        if (!sp) throw new PEEx("Немає спецсимволу");
+        if (!userFound) {
+            System.out.println("Не знайдено!");
+        }
     }
 
-    private static void valU(String u) throws NEEx {
-        if (u.length() < 5) throw new NEEx("<5 символiв");
-        if (u.contains(" ")) throw new NEEx("Є пробiл");
-    }
+    private static void authenticateUser(Scanner scanner, U[] users, int userCount) {
+        System.out.print("Iм'я: ");
+        String name = scanner.nextLine();
+        System.out.print("Пароль: ");
+        String password = scanner.nextLine();
+        boolean authSuccess = false;
 
-    private static boolean chkC(char c) {
-        return c >= 33 && c <= 126;
+        for (int i = 0; i < userCount; i++) {
+            if (users[i].name.equals(name) && users[i].password.equals(password)) {
+                System.out.println("Успiх!");
+                authSuccess = true;
+                break;
+            }
+        }
+
+        if (!authSuccess) {
+            System.out.println("Невiрнi данi!");
+        }
     }
 }
