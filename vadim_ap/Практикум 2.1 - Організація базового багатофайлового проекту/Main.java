@@ -1,47 +1,44 @@
-package Projects;
-
-import Projects.utils.FileUtils;
-
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner vvid = new Scanner(System.in);
-        MyDiary diary = new MyDiary(vvid);
+        MyDiary diary = new MyDiary();
+        Scanner input = new Scanner(System.in);
 
-        System.out.println("Відновити щоденник з файлу? (yes/no)");
-        String vybir = vvid.nextLine();
+        System.out.println("Restore diary from file? (yes/no)");
+        String choice = input.nextLine();
 
-        if (vybir.equalsIgnoreCase("yes")) {
-            System.out.print("Введіть шлях до файлу: ");
-            String shlyahDoFailu = vvid.nextLine();
-            FileUtils.zavantazhytyZFailu(diary, shlyahDoFailu);
-        } else {
-            System.out.println("Створено новий щоденник.");
-            diary.vibratyFormatDaty();
+        if (choice.equalsIgnoreCase("yes")) {
+            System.out.print("Enter the file path: ");
+            String filePath = input.nextLine();
+            diary.loadFromFile(filePath);
         }
 
         while (true) {
-            System.out.println("\nМій щоденник");
-            System.out.println("1. Додати запис");
-            System.out.println("2. Видалити записи за датою");
-            System.out.println("3. Переглянути всі записи");
-            System.out.println("4. Змінити формат дати");
-            System.out.println("5. Вийти");
-            System.out.print("Оберіть дію: ");
-            vybir = vvid.nextLine();
+            System.out.println("\n1. Add Entry\n2. View Entries\n3. Search Entry\n4. Save to File\n5. Exit");
+            System.out.print("Choose an option: ");
+            String option = input.nextLine();
 
-            switch (vybir) {
-                case "1" -> diary.dodatyZapys();
-                case "2" -> diary.vydalytyZaDatoiu();
-                case "3" -> diary.pokazatyVsiZapysy();
-                case "4" -> diary.vibratyFormatDaty();
-                case "5" -> {
-                    FileUtils.zberegtyDoFailu(diary, vvid);
-                    vvid.close();
+            switch (option) {
+                case "1":
+                    diary.addEntry();
+                    break;
+                case "2":
+                    diary.viewEntries();
+                    break;
+                case "3":
+                    diary.searchEntry();
+                    break;
+                case "4":
+                    System.out.print("Enter file path to save: ");
+                    String path = input.nextLine();
+                    diary.saveToFile(path);
+                    break;
+                case "5":
+                    System.out.println("Goodbye!");
                     return;
-                }
-                default -> System.out.println("Невірний вибір!");
+                default:
+                    System.out.println("Invalid option.");
             }
         }
     }
