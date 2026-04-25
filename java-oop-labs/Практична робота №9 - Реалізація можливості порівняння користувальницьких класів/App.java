@@ -126,7 +126,7 @@ public class App {
                 case 9:
                     System.out.println("\n=== Тести виключень ===");
                     try {
-                        new MyLinkedList<>(-5);
+                        MyLinkedList<ListItem> badList = new MyLinkedList<>(-5);
                     } catch (NegativeSizeException e) {
                         System.out.println("NegativeSizeException: " + e.getMessage());
                     }
