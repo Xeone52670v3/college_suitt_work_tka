@@ -1,5 +1,3 @@
-package ua.practical11;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
