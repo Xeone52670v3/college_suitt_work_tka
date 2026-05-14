@@ -1,5 +1,3 @@
-package ua.practical11;
-
 import java.util.Objects;
 
 public class UserIdentifier {
