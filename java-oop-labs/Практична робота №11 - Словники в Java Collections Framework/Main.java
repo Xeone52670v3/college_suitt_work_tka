@@ -55,8 +55,6 @@ public class Main {
         System.out.print("Ваш вибір: ");
     }
 
-    // ─── Пункт 1 ─────────────────────────────────────────────────────────────
-
     private static void doRegister() {
         System.out.print("Логін: ");
         String login = scanner.nextLine().trim();
@@ -64,9 +62,7 @@ public class Main {
         String password = scanner.nextLine().trim();
         registry.registerUser(login, password);
     }
-
-    // ─── Пункт 2 ─────────────────────────────────────────────────────────────
-
+    
     private static void doLogin() {
         System.out.print("Логін: ");
         String login = scanner.nextLine().trim();
@@ -74,8 +70,6 @@ public class Main {
         String password = scanner.nextLine().trim();
         registry.loginUser(login, password);
     }
-
-    // ─── Пункт 3 ─────────────────────────────────────────────────────────────
 
     private static void doLogout() {
         System.out.print("ID користувача: ");
@@ -86,16 +80,12 @@ public class Main {
             System.out.println("Невірний формат ID");
         }
     }
-
-    // ─── Пункт 4 ─────────────────────────────────────────────────────────────
-
+    
     private static void doCheckRegistered() {
         System.out.print("Логін для перевірки: ");
         String login = scanner.nextLine().trim();
         registry.isUserRegistered(login);
     }
-
-    // ─── Пункт 5 ─────────────────────────────────────────────────────────────
 
     private static void doRemove() {
         System.out.print("ID користувача для видалення: ");
@@ -107,8 +97,6 @@ public class Main {
         }
     }
 
-    // ─── Пункт 8 ─────────────────────────────────────────────────────────────
-
     private static void doGetUserList() {
         LinkedList<User> list = registry.getUserList();
         if (list.isEmpty()) {
@@ -119,9 +107,7 @@ public class Main {
         list.forEach(u -> System.out.println("  " + u));
         System.out.println("──────────────────────────────────────────────");
     }
-
-    // ─── Пункт 9 ─────────────────────────────────────────────────────────────
-
+    
     private static void doGetInOrder() {
         System.out.println("Оберіть порядок сортування:");
         System.out.println("  1 — за іменем (А→Я)");
@@ -145,8 +131,6 @@ public class Main {
         list.forEach(u -> System.out.println("  " + u));
         System.out.println("────────────────────────────");
     }
-
-    // ─── Пункт 10 ────────────────────────────────────────────────────────────
 
     private static void doGetFiltered() {
         System.out.println("Оберіть фільтр:");
